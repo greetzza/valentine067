@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untuk Kamu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: 'Georgia', serif;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        /* Book Cover */
+        .book-cover {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(255, 107, 157, 0.25);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .book-cover:hover {
+            transform: translateY(-5px);
+        }
+        
+        .cover-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 40px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .cover-title {
+            font-size: 3.2rem;
+            font-family: 'Pinyon Script', cursive;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cover-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        
+        .cover-heart {
+            font-size: 3rem;
+            animation: heartbeat 1.5s infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Page Container */
+        .page-container {
+            display: none;
+            position: relative;
+            height: 650px; /* Tinggi diperbesar untuk rasio portrait */
+            perspective: 1500px;
+        }
+        
+        .page-container.active {
+            display: block;
+        }
+        
+        /* Page Front (First Page - Photo Page) */
+        .page-front {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transform-origin: left center;
+            transition: transform 1s ease;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Photo Container dengan rasio 9:16 portrait */
+        .photo-container {
+            flex: 1; /* Mengisi sebagian besar ruang */
+            background: linear-gradient(135deg, #ffb3c6 0%, #ff8fab 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 9/16; /* Rasio portrait 9:16 */
+            max-height: 70vh; /* Maksimum 70% viewport height */
+        }
+        
+        .valentine-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Foto akan menutupi area tanpa distorsi */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .photo-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .photo-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        
+        .photo-placeholder p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .photo-title {
+            height: auto; /* Menyesuaikan tinggi */
+            min-height: 150px; /* Minimum height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            flex-shrink: 0; /* Tidak menyusut */
+        }
+        
+        .valentine-greeting {
+            font-size: 2rem;
+            color: #ff6b9d;
+            font-family: 'Dancing Script', cursive;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .name {
+            font-size: 1.8rem;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .click-next {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ff6b9d;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            padding: 8px 15px;
+            border: 1px solid #ffb3c6;
+            border-radius: 20px;
+            background: #fff5f7;
+        }
+        
+        .click-next i {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(0); }
+            40% { transform: translateX(5px); }
+            60% { transform: translateX(3px); }
+        }
+        
+        /* Page Back (Message Page) */
+        .page-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            overflow-y: auto;
+            transform: rotateY(180deg);
+            transform-origin: left center;
+            transition: transform 1s ease;
+            backface-visibility: hidden;
+            z-index: 1;
+        }
+        
+        .page-container.open .page-front {
+            transform: rotateY(-180deg);
+        }
+        
+        .page-container.open .page-back {
+            transform: rotateY(0deg);
+        }
+        
+        /* Message Content */
+        .message-content {
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .message-content h3 {
+            color: #ff6b9d;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .message-content p {
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+            text-align: justify;
+        }
+        
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2rem;
+            color: #ff6b9d;
+            text-align: right;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        
+        /* Controls */
+        .controls {
+            margin-top: 20px;
+            display: none;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .btn {
+            background: #ff8fab;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 143, 171, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: #ff6b9d;
+            transform: translateY(-2px);
+        }
+        
+        .back-btn {
+            background: #ffb3c6;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #ff8fab;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            color: #ff6b9d;
+            font-size: 1.2rem;
+            z-index: 100;
+            border: none;
+        }
+        
+        /* Decorative Elements */
+        .decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 20px;
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .book-cover {
+                height: 320px;
+            }
+            
+            .page-container {
+                height: 600px; /* Diperkecil untuk mobile */
+            }
+            
+            .cover-title {
+                font-size: 2.5rem;
+            }
+            
+            .valentine-greeting {
+                font-size: 1.8rem;
+            }
+            
+            .name {
+                font-size: 1.6rem;
+            }
+            
+            .page-back {
+                padding: 25px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 200px;
+                justify-content: center;
+            }
+            
+            .photo-container {
+                max-height: 65vh; /* Maksimum 65% viewport height di mobile */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .book-cover {
+                height: 300px;
+            }
+            
+            .page-container {
+                height: 580px;
+            }
+            
+            .cover-title {
+                font-size: 2.2rem;
+            }
+            
+            .cover-heart {
+                font-size: 2.5rem;
+            }
+            
+            .valentine-greeting {
+                font-size: 1.6rem;
+            }
+            
+            .name {
+                font-size: 1.4rem;
+            }
+            
+            .photo-container {
+                max-height: 60vh; /* Maksimum 60% viewport height di mobile kecil */
+            }
+        }
+        
+        /* Landscape mode adjustments */
+        @media (max-height: 700px) {
+            .page-container {
+                height: 550px;
+            }
+            
+            .photo-container {
+                max-height: 55vh;
+            }
+        }
+        
+        /* Untuk layar sangat kecil */
+        @media (max-height: 600px) {
+            .page-container {
+                height: 500px;
+            }
+            
+            .photo-container {
+                max-height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Music Control -->
+    <button class="music-control" id="musicToggle">
+        <i class="fas fa-music"></i>
+    </button>
+    
+    <div class="container">
+        <!-- Book Cover -->
+        <div class="book-cover" id="bookCover">
+            <div class="decoration" id="decoration"></div>
+            <div class="cover-content">
+                <div class="cover-heart">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="cover-title">Valentine</div>
+                <div class="cover-subtitle">Klik untuk membuka</div>
+            </div>
+        </div>
+        
+        <!-- Page Container -->
+        <div class="page-container" id="pageContainer">
+            <!-- First Page (Photo Page) -->
+            <div class="page-front" id="pageFront">
+                <div class="photo-container">
+                    <!-- Uncomment untuk gunakan foto -->
+                    <img src="manda.jpeg" alt="Foto Valentine" class="valentine-photo"> 
+                    
+                </div>
+                
+                <div class="photo-title">
+                    <div class="valentine-greeting">Happy Birthday</div>
+                    <div class="name" id="valentineName"></div>
+                    <div class="click-next">
+                        <span>Klik untuk membaca pesan</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Second Page (Message Page) -->
+            <div class="page-back" id="pageBack">
+                <div class="message-content">
+        
+                    <h3>Happy Valentine Naga</h3>
+                    <div class="signature">Dengan cinta, <br>Rafli</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls" id="controls">
+            <button class="btn back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+            <button class="btn" id="closeBook">
+                <i class="fas fa-heart"></i> Tutup Kartu
+            </button>
+        </div>
+        
+    </div>
+
+    <!-- Background Music -->
+    <audio id="backgroundMusic" loop>
+        <source src="d.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // DOM Elements
+        const bookCover = document.getElementById('bookCover');
+        const pageContainer = document.getElementById('pageContainer');
+        const pageFront = document.getElementById('pageFront');
+        const closeBookBtn = document.getElementById('closeBook');
+        const backBtn = document.getElementById('backBtn');
+        const controls = document.getElementById('controls');
+        const decoration = document.getElementById('decoration');
+        const musicToggle = document.getElementById('musicToggle');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const valentineName = document.getElementById('valentineName');
+        
+        // State variables
+        let isBookOpen = false;
+        let isMusicPlaying = false;
+        
+        // Ganti nama di sini
+        valentineName.textContent = "Teaz";
+        
+        // Create floating hearts
+        function createHearts() {
+            decoration.innerHTML = '';
+            for (let i = 0; i < 12; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('floating-heart');
+                heart.innerHTML = '❤';
+                
+                // Random position
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const size = Math.random() * 15 + 10;
+                const delay = Math.random() * 5;
+                
+                heart.style.left = `${left}%`;
+                heart.style.top = `${top}%`;
+                heart.style.fontSize = `${size}px`;
+                heart.style.animationDelay = `${delay}s`;
+                
+                decoration.appendChild(heart);
+            }
+        }
+        
+        // Play background music
+        function playMusic() {
+            backgroundMusic.volume = 0.3;
+            backgroundMusic.play().then(() => {
+                isMusicPlaying = true;
+                musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+                musicToggle.style.color = '#ff6b9d';
+            }).catch(() => {
+                console.log('Autoplay diblokir, tunggu interaksi pengguna');
+            });
+        }
+        
+        // Toggle music
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                backgroundMusic.pause();
+                musicToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                musicToggle.style.color = '#999';
+            } else {
+                backgroundMusic.play();
+                musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+                musicToggle.style.color = '#ff6b9d';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+        
+        // Step 1: Open book to first page (photo page)
+        function openBook() {
+            // Hide cover
+            bookCover.style.display = 'none';
+            
+            // Show page container
+            pageContainer.classList.add('active');
+            
+            // Play music on first click
+            if (!isMusicPlaying) {
+                playMusic();
+            }
+            
+            // Create hearts
+            createHearts();
+        }
+        
+        // Step 2: Open to message page
+        function openToMessage() {
+            pageContainer.classList.add('open');
+            controls.style.display = 'flex';
+        }
+        
+        // Step 3: Go back to first page (photo page)
+        function goBackToPhotoPage() {
+            pageContainer.classList.remove('open');
+            controls.style.display = 'none';
+        }
+        
+        // Step 4: Close book completely
+        function closeBook() {
+            // Close animation
+            pageContainer.classList.remove('open');
+            
+            // Wait for animation to complete
+            setTimeout(() => {
+                pageContainer.classList.remove('active');
+                bookCover.style.display = 'block';
+                controls.style.display = 'none';
+                createHearts();
+            }, 1000);
+        }
+        
+        // Event Listeners
+        bookCover.addEventListener('click', openBook);
+        pageFront.addEventListener('click', openToMessage);
+        closeBookBtn.addEventListener('click', closeBook);
+        backBtn.addEventListener('click', goBackToPhotoPage);
+        musicToggle.addEventListener('click', toggleMusic);
+        
+        // Initialize
+        createHearts();
+        
+        // Add click sound effect
+        const clickSound = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
+        
+        function playClickSound() {
+            clickSound.volume = 0.2;
+            clickSound.currentTime = 0;
+            clickSound.play().catch(() => {});
+        }
+        
+        bookCover.addEventListener('click', playClickSound);
+        pageFront.addEventListener('click', playClickSound);
+        closeBookBtn.addEventListener('click', playClickSound);
+        backBtn.addEventListener('click', playClickSound);
+        
+        // Untuk mengganti foto placeholder dengan foto asli:
+        // 1. Siapkan foto dengan format portrait (9:16)
+        // 2. Upload ke hosting atau tempatkan di folder yang sama
+        // 3. Ganti kode di photo-container dengan:
+        //    <img src="nama-foto-kalian.jpg" alt="Foto Valentine" class="valentine-photo">
+    </script>
+</body>
+</html>
